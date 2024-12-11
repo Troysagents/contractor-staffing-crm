@@ -1,0 +1,1 @@
+# Contractor Staffing CRM\n\nA website for a labour hire/contractor business to manage staffing and clients.
