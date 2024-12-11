@@ -3,6 +3,7 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { getStaff, createEvent, updateEvent, deleteEvent } from '../utils/staff';
+import { createGoogleMeetLink } from '../utils/google-meet';
 
 const localizer = momentLocalizer(moment);
 
@@ -12,7 +13,8 @@ export default function CalendarPage() {
   const [newEvent, setNewEvent] = useState({
     title: '',
     start: new Date(),
-    end: new Date(new Date().getTime() + 3600000)
+    end: new Date(new Date().getTime() + 3600000),
+    googleMeetLink: ''
   });
 
   useEffect(() => {
@@ -38,7 +40,7 @@ export default function CalendarPage() {
 
   const handleSelectSlot = ({ start, end }) => {
     // Set the new event's start and end dates
-    setNewEvent({ ...newEvent, start, end });
+    setNewEvent({ ...newEvent, start, end, googleMeetLink: createGoogleMeetLink() });
   };
 
   const handleEventSubmit = () => {
@@ -49,7 +51,8 @@ export default function CalendarPage() {
     setNewEvent({
       title: '',
       start: new Date(),
-      end: new Date(new Date().getTime() + 3600000)
+      end: new Date(new Date().getTime() + 3600000),
+      googleMeetLink: ''
     });
   };
 
@@ -78,6 +81,9 @@ export default function CalendarPage() {
           onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
           placeholder="Event Title"
         />
+        {newEvent.googleMeetLink && (
+          <p>Google Meet Link: <a href={newEvent.googleMeetLink} target="_blank" rel="noopener noreferrer">{newEvent.googleMeetLink}</a></p>
+        )}
         <button onClick={handleEventSubmit}>Create Event</button>
       </div>
       <Calendar
