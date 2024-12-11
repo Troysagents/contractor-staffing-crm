@@ -2,7 +2,7 @@
 const nextConfig = {
   output: 'standalone',
   images: {
-    unoptimized: true, // This will speed up build time significantly
+    unoptimized: true,
     domains: ['localhost'],
   },
   experimental: {
@@ -24,3 +24,5 @@ const nextConfig = {
     return config;
   },
 }
+
+module.exports = nextConfig
