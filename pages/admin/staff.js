@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { extractStaffInfo } from '../utils/staff';
 
 export default function StaffManagement() {
   const [staff, setStaff] = useState([]);
@@ -8,19 +9,30 @@ export default function StaffManagement() {
     qualifications: '',
     experience: ''
   });
+  const [cvFile, setCvFile] = useState(null);
 
   const handleInputChange = (e) => {
     setNewStaff({ ...newStaff, [e.target.name]: e.target.value });
   };
 
+  const handleCvUpload = (e) => {
+    setCvFile(e.target.files[0]);
+  };
+
   const handleAddStaff = () => {
-    setStaff([...staff, newStaff]);
+    if (cvFile) {
+      const staffInfo = extractStaffInfo(cvFile);
+      setStaff([...staff, { ...staffInfo, ...newStaff }]);
+    } else {
+      setStaff([...staff, newStaff]);
+    }
     setNewStaff({
       name: '',
       email: '',
       qualifications: '',
       experience: ''
     });
+    setCvFile(null);
   };
 
   const handleDeleteStaff = (index) => {
@@ -38,6 +50,7 @@ export default function StaffManagement() {
         <input type="email" name="email" value={newStaff.email} onChange={handleInputChange} placeholder="Email" />
         <input type="text" name="qualifications" value={newStaff.qualifications} onChange={handleInputChange} placeholder="Qualifications" />
         <input type="text" name="experience" value={newStaff.experience} onChange={handleInputChange} placeholder="Experience" />
+        <input type="file" onChange={handleCvUpload} />
         <button onClick={handleAddStaff}>Add</button>
       </div>
       <div>
