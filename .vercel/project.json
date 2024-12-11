@@ -1,0 +1,7 @@
+{
+  "buildCommand": "GENERATE_SOURCEMAP=false npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install --no-optional",
+  "framework": "nextjs",
+  "outputDirectory": ".next"
+}
