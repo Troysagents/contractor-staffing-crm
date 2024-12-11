@@ -1,27 +1,30 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { getStaff } from '../utils/staff';
 
 const localizer = momentLocalizer(moment);
 
 export default function CalendarPage() {
-  const [events, setEvents] = useState([
-    {
-      id: 1,
-      title: 'John Doe Interview',
-      start: new Date(2023, 11, 1, 10, 0),
-      end: new Date(2023, 11, 1, 11, 0),
-      staff: 'John Doe'
-    },
-    {
-      id: 2,
-      title: 'Jane Smith Onsite',
-      start: new Date(2023, 11, 3, 8, 0),
-      end: new Date(2023, 11, 3, 17, 0),
-      staff: 'Jane Smith'
-    }
-  ]);
+  const [events, setEvents] = useState([]);
+  const [staff, setStaff] = useState([]);
+
+  useEffect(() => {
+    // Fetch staff data
+    const fetchedStaff = getStaff();
+    setStaff(fetchedStaff);
+
+    // Convert staff data to calendar events
+    const staffEvents = fetchedStaff.map((member) => ({
+      id: member.id,
+      title: member.name,
+      start: new Date(member.schedule.start),
+      end: new Date(member.schedule.end),
+      staff: member
+    }));
+    setEvents(staffEvents);
+  }, []);
 
   const handleSelectEvent = (event) => {
     console.log('Selected event:', event);
@@ -32,8 +35,8 @@ export default function CalendarPage() {
     const newEvent = {
       id: events.length + 1,
       title: 'New Event',
-      start,
-      end
+      start: new Date(start),
+      end: new Date(end)
     };
     setEvents([...events, newEvent]);
   };
