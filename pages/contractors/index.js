@@ -2,10 +2,7 @@ import { useState } from 'react';
 
 export default function Contractors() {
   const [showAddModal, setShowAddModal] = useState(false);
-  const [contractors, setContractors] = useState([
-    { id: 1, name: 'John Smith', skills: 'Plumbing, General Maintenance', status: 'Active', contact: '0412 345 678' },
-    { id: 2, name: 'Sarah Wilson', skills: 'Electrical, Solar Installation', status: 'Active', contact: '0423 456 789' },
-  ]);
+  const [contractors, setContractors] = useState([]);
 
   const [newContractor, setNewContractor] = useState({
     name: '',
@@ -15,7 +12,7 @@ export default function Contractors() {
   });
 
   const handleAddContractor = () => {
-    setContractors([...contractors, { ...newContractor, id: contractors.length + 1 }]);
+    setContractors([...contractors, { ...newContractor, id: Date.now() }]);
     setNewContractor({ name: '', skills: '', contact: '', status: 'Active' });
     setShowAddModal(false);
   };
@@ -57,28 +54,36 @@ export default function Contractors() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {contractors.map((contractor) => (
-                    <tr key={contractor.id}>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
-                        {contractor.name}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {contractor.contact}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {contractor.skills}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${contractor.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
-                          {contractor.status}
-                        </span>
-                      </td>
-                      <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                        <button className="text-indigo-600 hover:text-indigo-900 mr-4">Edit</button>
-                        <button className="text-red-600 hover:text-red-900">Delete</button>
+                  {contractors.length === 0 ? (
+                    <tr>
+                      <td colSpan="5" className="px-3 py-4 text-sm text-gray-500 text-center">
+                        No contractors added yet. Click "Add Contractor" to get started.
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    contractors.map((contractor) => (
+                      <tr key={contractor.id}>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
+                          {contractor.name}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {contractor.contact}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {contractor.skills}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${contractor.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                            {contractor.status}
+                          </span>
+                        </td>
+                        <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                          <button className="text-indigo-600 hover:text-indigo-900 mr-4">Edit</button>
+                          <button className="text-red-600 hover:text-red-900">Delete</button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
@@ -121,6 +126,7 @@ export default function Contractors() {
                       value={newContractor.skills}
                       onChange={(e) => setNewContractor({ ...newContractor, skills: e.target.value })}
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      placeholder="e.g., Plumbing, Electrical, Carpentry"
                     />
                   </div>
                 </div>
