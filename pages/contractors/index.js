@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import FileUpload from '../../components/FileUpload';
 
 export default function Contractors() {
   const [showAddModal, setShowAddModal] = useState(false);
@@ -8,12 +9,25 @@ export default function Contractors() {
     name: '',
     skills: '',
     contact: '',
-    status: 'Active'
+    status: 'Active',
+    resume: null
   });
 
+  const handleFileUpload = (file) => {
+    setNewContractor(prev => ({
+      ...prev,
+      resume: file
+    }));
+  };
+
   const handleAddContractor = () => {
-    setContractors([...contractors, { ...newContractor, id: Date.now() }]);
-    setNewContractor({ name: '', skills: '', contact: '', status: 'Active' });
+    const contractorData = {
+      ...newContractor,
+      id: Date.now(),
+      resumeName: newContractor.resume ? newContractor.resume.name : null
+    };
+    setContractors([...contractors, contractorData]);
+    setNewContractor({ name: '', skills: '', contact: '', status: 'Active', resume: null });
     setShowAddModal(false);
   };
 
@@ -47,6 +61,7 @@ export default function Contractors() {
                     <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Name</th>
                     <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Contact</th>
                     <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Skills</th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Resume</th>
                     <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
                     <th className="relative py-3.5 pl-3 pr-4 sm:pr-6">
                       <span className="sr-only">Actions</span>
@@ -56,7 +71,7 @@ export default function Contractors() {
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {contractors.length === 0 ? (
                     <tr>
-                      <td colSpan="5" className="px-3 py-4 text-sm text-gray-500 text-center">
+                      <td colSpan="6" className="px-3 py-4 text-sm text-gray-500 text-center">
                         No contractors added yet. Click "Add Contractor" to get started.
                       </td>
                     </tr>
@@ -71,6 +86,13 @@ export default function Contractors() {
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {contractor.skills}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {contractor.resumeName ? (
+                            <span className="text-indigo-600">{contractor.resumeName}</span>
+                          ) : (
+                            'No resume'
+                          )}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${contractor.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
@@ -128,6 +150,15 @@ export default function Contractors() {
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                       placeholder="e.g., Plumbing, Electrical, Carpentry"
                     />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Resume</label>
+                    <FileUpload onFileUpload={handleFileUpload} />
+                    {newContractor.resume && (
+                      <p className="mt-2 text-sm text-gray-500">
+                        Selected: {newContractor.resume.name}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
