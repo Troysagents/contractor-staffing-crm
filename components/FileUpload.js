@@ -1,7 +1,37 @@
 import { useState, useCallback } from 'react';
 
-export default function FileUpload({ onFileUpload }) {
+export default function FileUpload({ onFileUpload, onDataExtracted }) {
   const [isDragging, setIsDragging] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const processResume = async (file) => {
+    setIsProcessing(true);
+    try {
+      // Here we'll add the API call to process the resume
+      // For now, simulating the AI extraction
+      const reader = new FileReader();
+      
+      reader.onload = async (e) => {
+        // This is where we'll integrate the AI processing
+        // Simulated response for now
+        const extractedData = {
+          name: 'Extracted Name',
+          skills: 'Extracted Skills',
+          contact: 'Extracted Contact'
+        };
+        
+        onDataExtracted(extractedData);
+        onFileUpload(file);
+      };
+      
+      reader.readAsText(file);
+    } catch (error) {
+      console.error('Error processing resume:', error);
+      alert('Error processing resume. Please try again.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   const handleDrag = useCallback((e) => {
     e.preventDefault();
@@ -22,18 +52,18 @@ export default function FileUpload({ onFileUpload }) {
     if (files && files[0]) {
       const file = files[0];
       if (file.type === 'application/pdf' || file.name.endsWith('.doc') || file.name.endsWith('.docx')) {
-        onFileUpload(file);
+        processResume(file);
       } else {
         alert('Please upload a PDF, DOC, or DOCX file');
       }
     }
-  }, [onFileUpload]);
+  }, [onFileUpload, onDataExtracted]);
 
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
     if (file) {
       if (file.type === 'application/pdf' || file.name.endsWith('.doc') || file.name.endsWith('.docx')) {
-        onFileUpload(file);
+        processResume(file);
       } else {
         alert('Please upload a PDF, DOC, or DOCX file');
       }
@@ -48,6 +78,7 @@ export default function FileUpload({ onFileUpload }) {
       onDrop={handleDrop}
       className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-md 
         ${isDragging ? 'border-indigo-500 bg-indigo-50' : 'border-gray-300'} 
+        ${isProcessing ? 'opacity-50 cursor-wait' : ''} 
         hover:border-indigo-500 transition-colors`}
     >
       <div className="space-y-1 text-center">
@@ -67,15 +98,16 @@ export default function FileUpload({ onFileUpload }) {
         </svg>
         <div className="flex text-sm text-gray-600">
           <label className="relative cursor-pointer rounded-md font-medium text-indigo-600 hover:text-indigo-500">
-            <span>Upload a resume</span>
+            <span>{isProcessing ? 'Processing...' : 'Upload a resume'}</span>
             <input
               type="file"
               className="sr-only"
               accept=".pdf,.doc,.docx"
               onChange={handleFileSelect}
+              disabled={isProcessing}
             />
           </label>
-          <p className="pl-1">or drag and drop</p>
+          <p className="pl-1">{isProcessing ? '' : 'or drag and drop'}</p>
         </div>
         <p className="text-xs text-gray-500">PDF, DOC up to 10MB</p>
       </div>
